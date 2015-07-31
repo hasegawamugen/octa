@@ -16,10 +16,13 @@
     #$row = $pod->query("SELECT rss from $table WHERE test = 0 LIMIT 1");
     require_once('/home/mugen/octa/SimpleHTMLDOMParser/simple_html_dom.php');
     mb_language("Japanese");  
-     foreach($pod->query("SELECT name,rss FROM it_crowl_rss WHERE flag = 0") as $row) {
+     foreach($pod->query("SELECT no,name,rss,all_num FROM it_crowl_rss WHERE flag = 0") as $row) {
+        $no = $row[no];
         $name = $row[name];
         $rss = $row[rss];
+        $all_num = $row[all_num];
 
+        $pod->query("UPDATE it_crowl_rss SET flag=1 WHERE no=\"$no\"");
         $source = simplexml_load_file($rss);
 
         foreach($source->channel->item as $item){
@@ -52,15 +55,20 @@
             echo "$image<br>$description<br>$date<br>$ymdm<br><br>";
             if($link){
                 foreach($pod->query("SELECT no FROM it WHERE link LIKE \"$link\" LIMIT 1") as $row) {
-                     $no = $row[no];
+                     $flag = $row[no];
                 }
-                if(!$no){
+                if(!$flag){
                     #$pod_mugen->query("INSERT INTO main(name,url,title,link,image,date) VALUES (\"$name\",\"$url\",\"$title\",\"$link\",\"$image\",\"$date\")");
                     $pod->query("INSERT INTO it(name,url,title,link,description,image,date) VALUES (\"$name\",\"$url\",\"$title\",\"$link\",\"$description\",\"$image\",\"$date\")");
+                    $pod->query("UPDATE it_site_all SET date=\"$ymdm\" WHERE no=\"$all_num\"");
                 } 
             }
 
             $no = "";
+            $flag = "";
+            $ymdm = "";
+            $all_num = "";
+            
         }
         #echo "$name";
 
