@@ -99,7 +99,7 @@ function add($site,$url,$rss,$html) {
 		}
 	}
 
-	echo $site . "<br>" . $url . "<br>" . $rss . "<br>" . $html;
+	echo $site . "<br>" . $url . "<br>" . $rss . "<br>" . $html . "<br>";
 
 	if($flag){
 		echo "既に登録されてるよ";
